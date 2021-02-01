@@ -1,5 +1,6 @@
 const express = require('express');
 const Book = require('../models/Book');
+const User = require('../models/User');
 
 const booksRouter = express.Router();
 
@@ -13,17 +14,25 @@ booksRouter.get('/', async (request, response, next) => {
 });
 
 booksRouter.post('/', async (request, response, next) => {
+  const userId = '6017a1112870db05f8c89562'; // test
+
   try {
     const { body } = request;
+    const user = await User.findById(userId);
 
     const book = new Book({
       name: body.name,
       author: body.author,
       read: body.read,
-      // userId: 12312312312,
+      userId,
       bookCoverUrl: body.bookCoverUrl,
     });
+
+    user.books = user.books.concat(book._id);
+
     await book.save();
+    await user.save();
+
     response.json(book);
   } catch (e) {
     next(e);
