@@ -6,6 +6,7 @@ const logger = require('./utils/logger');
 const middleware = require('./utils/middleware');
 
 const booksRouter = require('./controllers/books');
+const loginRouter = require('./controllers/login');
 const usersRouter = require('./controllers/users');
 
 const app = express();
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use(middleware.requestLogger);
 
 app.use('/books', booksRouter);
+app.use('/login', loginRouter);
 app.use('/users', usersRouter);
 
 app.use(middleware.unknownEndpoint);
