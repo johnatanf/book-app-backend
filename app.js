@@ -5,6 +5,9 @@ const config = require('./utils/config');
 const logger = require('./utils/logger');
 const middleware = require('./utils/middleware');
 
+const booksRouter = require('./controllers/books');
+const usersRouter = require('./controllers/users');
+
 const app = express();
 
 logger.info(`Connecting to ${config.MONGODB_URI}`);
@@ -23,9 +26,8 @@ app.use(cors());
 app.use(express.json());
 app.use(middleware.requestLogger);
 
-app.use('/', (request, response) => {
-  response.send('Hello, world!');
-});
+app.use('/books', booksRouter);
+app.use('/users', usersRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
