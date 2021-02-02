@@ -6,7 +6,7 @@ const booksRouter = express.Router();
 
 booksRouter.get('/', async (request, response, next) => {
   const userId = '6017a1112870db05f8c89562'; // test
-
+  console.log(request.user);
   try {
     const books = await Book.find({ userId });
     response.json(books);

@@ -1,6 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const bodyParser = require('body-parser');
 const config = require('./utils/config');
 const logger = require('./utils/logger');
 const middleware = require('./utils/middleware');
@@ -25,7 +29,14 @@ mongoose.connect(config.MONGODB_URI, {
 
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(middleware.requestLogger);
+
+app.use(cookieParser());
+app.use(session({ secret: config.SESSION_SECRET, resave: false }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/books', booksRouter);
 app.use('/login', loginRouter);
