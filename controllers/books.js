@@ -23,10 +23,11 @@ booksRouter.post('/', middleware.checkLoggedIn, async (request, response, next) 
     const user = await User.findById(userId);
 
     const book = new Book({
-      name: body.name,
-      author: body.author,
-      read: body.read,
-      userId,
+      googleBookId: body.googleBookId,
+      title: body.title,
+      subtitle: body.subtitle,
+      authors: body.authors,
+      read: false,
       bookCoverUrl: body.bookCoverUrl,
     });
 

@@ -1,14 +1,16 @@
 const mongoose = require('mongoose');
 
 const bookSchema = new mongoose.Schema({
-  name: String,
-  author: String,
+  googleBookId: String,
+  title: String,
+  subtitle: String,
+  authors: [String],
   read: Boolean,
+  bookCoverUrl: String,
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   },
-  bookCoverUrl: String,
 });
 
 const Book = mongoose.model('Book', bookSchema);
