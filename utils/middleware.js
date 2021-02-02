@@ -8,8 +8,15 @@ const requestLogger = (request, response, next) => {
   next();
 };
 
+const checkLoggedIn = (request, response, next) => {
+  if (!request.user) {
+    return response.status(403).json({ error: 'Please log in first' });
+  }
+  return next();
+};
+
 const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'Unknown endpoint' });
+  response.status(404).json({ error: 'Unknown endpoint' });
 };
 
 const errorHandler = (error, request, response, next) => {
@@ -20,6 +27,7 @@ const errorHandler = (error, request, response, next) => {
 
 module.exports = {
   requestLogger,
+  checkLoggedIn,
   unknownEndpoint,
   errorHandler,
 };

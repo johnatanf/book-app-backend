@@ -17,7 +17,7 @@ passport.use(new LocalStrategy(
       const correctPassword = await bcrypt.compare(password, user.passwordHash);
 
       if (!correctPassword) {
-        return done(null, false, { message: 'incorrect passsword.'});
+        return done(null, false, { message: 'incorrect passsword.' });
       }
 
       return done(null, user);
@@ -38,7 +38,6 @@ passport.deserializeUser((id, done) => {
 });
 
 loginRouter.get('/success', (request, response) => {
-  console.log(request.user);
   response.send('Successful login!');
 });
 

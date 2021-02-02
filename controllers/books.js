@@ -1,12 +1,12 @@
 const express = require('express');
+const middleware = require('../utils/middleware');
 const Book = require('../models/Book');
 const User = require('../models/User');
 
 const booksRouter = express.Router();
 
-booksRouter.get('/', async (request, response, next) => {
-  const userId = '6017a1112870db05f8c89562'; // test
-  console.log(request.user);
+booksRouter.get('/', middleware.checkLoggedIn, async (request, response, next) => {
+  const userId = request.user._id;
   try {
     const books = await Book.find({ userId });
     response.json(books);
@@ -15,8 +15,8 @@ booksRouter.get('/', async (request, response, next) => {
   }
 });
 
-booksRouter.post('/', async (request, response, next) => {
-  const userId = '6017a1112870db05f8c89562'; // test
+booksRouter.post('/', middleware.checkLoggedIn, async (request, response, next) => {
+  const userId = request.user._id;
 
   try {
     const { body } = request;
@@ -41,38 +41,62 @@ booksRouter.post('/', async (request, response, next) => {
   }
 });
 
-booksRouter.get('/:id', async (request, response, next) => {
+booksRouter.get('/:id', middleware.checkLoggedIn, async (request, response, next) => {
   try {
+    const userId = request.user._id;
     const { id } = request.params;
     const book = await Book.findById(id);
-    response.json(book);
+
+    if (!book.userId.equals(userId)) {
+      return response.json({ error: 'You do not have permission to view this book.' });
+    }
+    return response.json(book);
   } catch (e) {
-    next(e);
+    return next(e);
   }
 });
 
-booksRouter.put('/:id', async (request, response, next) => {
+booksRouter.put('/:id', middleware.checkLoggedIn, async (request, response, next) => {
   try {
+    const userId = request.user._id;
+    const { id } = request.params;
     const { body } = request;
+    const book = await Book.findById(id);
+
+    if (!book.userId.equals(userId)) {
+      return response.json({ error: 'You do not have permission to edit this book.' });
+    }
+
     const updatedBook = await Book.findByIdAndUpdate(
-      request.params.id,
+      id,
       { read: body.read },
       { new: true },
     );
 
-    response.json(updatedBook);
+    return response.json(updatedBook);
   } catch (e) {
-    next(e);
+    return next(e);
   }
 });
 
-booksRouter.delete('/:id', async (request, response, next) => {
+booksRouter.delete('/:id', middleware.checkLoggedIn, async (request, response, next) => {
   try {
+    const userId = request.user._id;
     const { id } = request.params;
+    const book = await Book.findById(id);
+    const user = await User.findById(userId);
+
+    if (!book.userId.equals(userId)) {
+      return response.json({ error: 'You do not have permission to delete this book.' });
+    }
+
+    user.books = user.books.filter((iterateBook) => !iterateBook._id.equals(book._id));
+
     await Book.findByIdAndDelete(id);
-    response.status(200).json({ message: 'delete successful' });
+    await user.save();
+    return response.status(200).json({ message: 'delete successful' });
   } catch (e) {
-    next(e);
+    return next(e);
   }
 });
 
