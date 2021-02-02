@@ -29,6 +29,7 @@ booksRouter.post('/', middleware.checkLoggedIn, async (request, response, next) 
       authors: body.authors,
       read: false,
       bookCoverUrl: body.bookCoverUrl,
+      userId,
     });
 
     user.books = user.books.concat(book._id);
