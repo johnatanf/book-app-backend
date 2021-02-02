@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 const middleware = require('../utils/middleware');
 const Book = require('../models/Book');
 const User = require('../models/User');
@@ -52,7 +53,23 @@ booksRouter.get('/:id', middleware.checkLoggedIn, async (request, response, next
     if (!book.userId.equals(userId)) {
       return response.json({ error: 'You do not have permission to view this book.' });
     }
-    return response.json(book);
+
+    // request remaining information from google api
+    const axiosData = await axios.get(`https://www.googleapis.com/books/v1/volumes/${book.googleBookId}`);
+    const googleData = axiosData.data;
+
+    return response.json({
+      ...book.toObject(),
+      description: googleData.volumeInfo.description,
+      categories: googleData.volumeInfo.categories,
+      ISBN_10: googleData.volumeInfo.industryIdentifiers.find((identifier) => identifier.type === 'ISBN_10').identifier,
+      ISBN_13: googleData.volumeInfo.industryIdentifiers.find((identifier) => identifier.type === 'ISBN_13').identifier,
+      releaseDate: googleData.volumeInfo.publishedDate,
+      rating: googleData.volumeInfo.averageRating,
+      pageCount: googleData.volumeInfo.pageCount,
+      printedPageCount: googleData.volumeInfo.printedPageCount,
+      linkToPurchase: googleData.saleInfo.buyLink,
+    });
   } catch (e) {
     return next(e);
   }
