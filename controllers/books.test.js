@@ -19,10 +19,6 @@ describe('/books routes', () => {
         .expect(403)
         .expect('Content-Type', /application\/json/);
     });
-
-    test('get /books/:id returns status 403 if not logged in', async () => {
-
-    });
   });
 
   describe('when logged in', () => {

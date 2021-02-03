@@ -8,6 +8,11 @@ const usersRouter = express.Router();
 
 usersRouter.post('/', async (request, response) => {
   const { body } = request;
+
+  if (!body.username || !body.name || !body.password) {
+    return response.status(400).json({ error: 'username, name and password are required' });
+  }
+
   const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
   const user = new User({
@@ -18,7 +23,10 @@ usersRouter.post('/', async (request, response) => {
 
   await user.save();
 
-  response.json(user);
+  return response.json({
+    username: user.username,
+    name: user.name,
+  });
 });
 
 module.exports = usersRouter;

@@ -18,15 +18,17 @@ const app = express();
 
 logger.info(`Connecting to ${config.MONGODB_URI}`);
 
-mongoose.connect(config.MONGODB_URI, {
-  useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true,
-})
-  .then(() => {
-    logger.info('Successfully connected to MongoDB');
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect(config.MONGODB_URI, {
+    useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true,
   })
-  .catch((err) => {
-    logger.error(`Failed to establish connection with MongoDB ${err.message}`);
-  });
+    .then(() => {
+      logger.info('Successfully connected to MongoDB');
+    })
+    .catch((err) => {
+      logger.error(`Failed to establish connection with MongoDB ${err.message}`);
+    });
+}
 
 app.use(cors());
 app.use(express.json());
