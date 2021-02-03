@@ -38,11 +38,11 @@ passport.deserializeUser((id, done) => {
 });
 
 loginRouter.get('/success', (request, response) => {
-  response.send('Successful login!');
+  response.send({ message: 'login successful' });
 });
 
 loginRouter.get('/failure', (request, response) => {
-  response.send('Login failed!');
+  response.status(400).send({ error: 'login failed' });
 });
 
 loginRouter.post('/',
