@@ -62,8 +62,6 @@ booksRouter.get('/:id', middleware.checkLoggedIn, async (request, response, next
       ...book.toObject(),
       description: googleData.volumeInfo.description,
       categories: googleData.volumeInfo.categories,
-      ISBN_10: googleData.volumeInfo.industryIdentifiers.find((identifier) => identifier.type === 'ISBN_10').identifier,
-      ISBN_13: googleData.volumeInfo.industryIdentifiers.find((identifier) => identifier.type === 'ISBN_13').identifier,
       releaseDate: googleData.volumeInfo.publishedDate,
       rating: googleData.volumeInfo.averageRating,
       pageCount: googleData.volumeInfo.pageCount,
