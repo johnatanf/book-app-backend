@@ -62,6 +62,7 @@ describe('post /users', () => {
   });
 });
 
-afterAll(() => {
+afterAll(async () => {
+  await User.deleteMany({});
   mongoose.connection.close();
 });
