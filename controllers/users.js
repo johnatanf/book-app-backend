@@ -1,5 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const sanitizeHtml = require('sanitize-html');
 const User = require('../models/User');
 
 const saltRounds = 10;
@@ -8,23 +9,21 @@ const usersRouter = express.Router();
 
 usersRouter.post('/', async (request, response, next) => {
   try {
-    const { body } = request;
+    const username = request.body.username ? sanitizeHtml(request.body.username) : undefined;
+    const name = request.body.name ? sanitizeHtml(request.body.name) : undefined;
+    const password = request.body.password ? sanitizeHtml(request.body.password) : undefined;
 
-    if (!body.username || !body.name || !body.password) {
+    if (!username || !name || !password) {
       return response.status(400).json({ error: 'username, name and password are required' });
     }
 
-    if (body.password.length < 6) {
+    if (password.length < 6) {
       return response.status(400).json({ error: 'Password should be at least 6 character long.' });
     }
 
-    const passwordHash = await bcrypt.hash(body.password, saltRounds);
+    const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    const user = new User({
-      username: body.username,
-      name: body.name,
-      passwordHash,
-    });
+    const user = new User({ username, name, passwordHash });
 
     await user.save();
 

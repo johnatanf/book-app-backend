@@ -1,5 +1,6 @@
 const express = require('express');
 const axios = require('axios');
+const sanitizeHtml = require('sanitize-html');
 const middleware = require('../utils/middleware');
 const Book = require('../models/Book');
 const User = require('../models/User');
@@ -7,8 +8,8 @@ const User = require('../models/User');
 const booksRouter = express.Router();
 
 booksRouter.get('/', middleware.checkLoggedIn, async (request, response, next) => {
-  const userId = request.user._id;
   try {
+    const userId = request.user._id;
     const books = await Book.find({ userId });
     response.json(books);
   } catch (e) {
@@ -17,19 +18,23 @@ booksRouter.get('/', middleware.checkLoggedIn, async (request, response, next) =
 });
 
 booksRouter.post('/', middleware.checkLoggedIn, async (request, response, next) => {
-  const userId = request.user._id;
-
   try {
+    const userId = request.user._id;
     const { body } = request;
     const user = await User.findById(userId);
+    const googleBookId = body.googleBookId ? sanitizeHtml(body.googleBookId) : undefined;
+    const title = body.title ? sanitizeHtml(body.title) : undefined;
+    const subtitle = body.subtitle ? sanitizeHtml(body.subtitle) : undefined;
+    const authors = body.article ? sanitizeHtml(body.authors) : undefined;
+    const bookCoverUrl = body.bookCoverUrl ? sanitizeHtml(body.bookCoverUrl) : undefined;
 
     const book = new Book({
-      googleBookId: body.googleBookId,
-      title: body.title,
-      subtitle: body.subtitle,
-      authors: body.authors,
+      googleBookId,
+      title,
+      subtitle,
+      authors,
       read: false,
-      bookCoverUrl: body.bookCoverUrl,
+      bookCoverUrl,
       userId,
     });
 
@@ -77,7 +82,7 @@ booksRouter.put('/:id', middleware.checkLoggedIn, async (request, response, next
   try {
     const userId = request.user._id;
     const { id } = request.params;
-    const { body } = request;
+    const read = request.body.read ? sanitizeHtml(request.body.read) : false;
     const book = await Book.findById(id);
 
     if (!book.userId.equals(userId)) {
@@ -86,7 +91,7 @@ booksRouter.put('/:id', middleware.checkLoggedIn, async (request, response, next
 
     const updatedBook = await Book.findByIdAndUpdate(
       id,
-      { read: body.read },
+      { read },
       { new: true },
     );
 

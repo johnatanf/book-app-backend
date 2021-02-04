@@ -2,6 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
+const sanitizeHtml = require('sanitize-html');
 const User = require('../models/User');
 
 const loginRouter = express.Router();
@@ -9,12 +10,12 @@ const loginRouter = express.Router();
 passport.use(new LocalStrategy(
   async (username, password, done) => {
     try {
-      const user = await User.findOne({ username });
+      const user = await User.findOne({ username: sanitizeHtml(username) });
       if (!user) {
         return done(null, false, { message: 'Incorrect username.' });
       }
 
-      const correctPassword = await bcrypt.compare(password, user.passwordHash);
+      const correctPassword = await bcrypt.compare(sanitizeHtml(password), user.passwordHash);
 
       if (!correctPassword) {
         return done(null, false, { message: 'incorrect passsword.' });
