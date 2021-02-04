@@ -17,7 +17,7 @@ beforeAll(async () => {
 });
 
 describe('post /login', () => {
-  test('correct user credentials', async () => {
+  test('log in with correct user credentials returns a success message', async () => {
     await request
       .post('/login')
       .redirects(1)
@@ -30,7 +30,7 @@ describe('post /login', () => {
       .expect({ message: 'login successful' });
   });
 
-  test('incorrect username', async () => {
+  test('log in with incorrect username returns an error', async () => {
     await request
       .post('/login')
       .redirects(1)
@@ -43,7 +43,7 @@ describe('post /login', () => {
       .expect({ error: 'login failed' });
   });
 
-  test('incorrect password', async () => {
+  test('log in with incorrect password returns an error', async () => {
     await request
       .post('/login')
       .redirects(1)

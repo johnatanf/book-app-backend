@@ -14,7 +14,40 @@ beforeAll(async () => {
 });
 
 describe('post /users', () => {
-  test('complete credentials', async () => {
+  test('creating an account with no username results in an error', async () => {
+    const user = {
+      name: 'Tim',
+      password: 'tim123',
+    };
+    await request.post('/users')
+      .send(user)
+      .expect(400)
+      .expect({ error: 'username, name and password are required' });
+  });
+
+  test('creating an account with no name results in an error', async () => {
+    const user = {
+      username: 'tim123',
+      password: 'tim123',
+    };
+    await request.post('/users')
+      .send(user)
+      .expect(400)
+      .expect({ error: 'username, name and password are required' });
+  });
+
+  test('creating an account with no password results in an error', async () => {
+    const user = {
+      username: 'tim123',
+      name: 'Tim',
+    };
+    await request.post('/users')
+      .send(user)
+      .expect(400)
+      .expect({ error: 'username, name and password are required' });
+  });
+
+  test('creating an account with complete and correct credentials results in status code 200 and returns the username and name in json format', async () => {
     const user = {
       username: 'tim123',
       name: 'Tim',
@@ -29,37 +62,40 @@ describe('post /users', () => {
       });
   });
 
-  test('missing username', async () => {
+  test('attempting to create an account with an already taken username results in an error', async () => {
     const user = {
+      username: 'tim123',
       name: 'Tim',
       password: 'tim123',
     };
     await request.post('/users')
       .send(user)
       .expect(400)
-      .expect({ error: 'username, name and password are required' });
+      .expect({ error: 'Username is already taken.' });
   });
 
-  test('missing name', async () => {
+  test('attempting to create an account with a username of less than 6 characters results in an error', async () => {
     const user = {
-      username: 'tim123',
+      username: 'tim12',
+      name: 'Tim',
       password: 'tim123',
     };
     await request.post('/users')
       .send(user)
       .expect(400)
-      .expect({ error: 'username, name and password are required' });
+      .expect({ error: 'Username should be at least 6 characters long.' });
   });
 
-  test('missing password', async () => {
+  test('attempting to create an account with a password of less than 6 characters results in an error', async () => {
     const user = {
       username: 'tim123',
       name: 'Tim',
+      password: 'tim12',
     };
     await request.post('/users')
       .send(user)
       .expect(400)
-      .expect({ error: 'username, name and password are required' });
+      .expect({ error: 'Password should be at least 6 character long.' });
   });
 });
 
