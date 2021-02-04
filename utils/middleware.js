@@ -26,6 +26,10 @@ const errorHandler = (error, request, response, next) => {
     return response.status(404).json({ error: 'That book does not exist.' });
   }
 
+  if (error.name === 'ValidationError' && error.errors.username.kind === 'unique') {
+    return response.status(400).json({ error: 'Username is already taken.' });
+  }
+
   return next(error);
 };
 
