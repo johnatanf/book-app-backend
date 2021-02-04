@@ -13,7 +13,7 @@ beforeAll(async () => {
   await User.deleteMany({});
   await request
     .post('/users')
-    .send({ username: 'tim', name: 'Tim', password: 'tim' });
+    .send({ username: 'tim123', name: 'Tim', password: 'tim123' });
 });
 
 describe('post /login', () => {
@@ -22,8 +22,8 @@ describe('post /login', () => {
       .post('/login')
       .redirects(1)
       .send({
-        username: 'tim',
-        password: 'tim',
+        username: 'tim123',
+        password: 'tim123',
       })
       .expect(200)
       .expect('Content-Type', /json/)
@@ -35,8 +35,8 @@ describe('post /login', () => {
       .post('/login')
       .redirects(1)
       .send({
-        username: 'tima',
-        password: 'tim',
+        username: 'tima123',
+        password: 'tim123',
       })
       .expect(400)
       .expect('Content-Type', /json/)
@@ -48,8 +48,8 @@ describe('post /login', () => {
       .post('/login')
       .redirects(1)
       .send({
-        username: 'tim',
-        password: 'tima',
+        username: 'tim123',
+        password: 'tima123',
       })
       .expect(400)
       .expect('Content-Type', /json/)

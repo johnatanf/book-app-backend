@@ -25,11 +25,11 @@ beforeAll(async () => {
 
   await agent
     .post('/users')
-    .send({ username: 'tim', name: 'Tim', password: 'tim' });
+    .send({ username: 'tim123', name: 'Tim', password: 'tim123' });
 
   await agent
     .post('/login')
-    .send({ username: 'tim', password: 'tim' });
+    .send({ username: 'tim123', password: 'tim123' });
 
   await agent
     .post('/books')
@@ -49,11 +49,11 @@ beforeAll(async () => {
 
   await agent2
     .post('/users')
-    .send({ username: 'bob', name: 'Bob', password: 'bob' });
+    .send({ username: 'bob456', name: 'Bob', password: 'bob456' });
 
   await agent2
     .post('/login')
-    .send({ username: 'bob', password: 'bob' });
+    .send({ username: 'bob456', password: 'bob456' });
 
   await agent2
     .post('/books')
@@ -82,7 +82,7 @@ describe('get /books', () => {
   test('retrieving /books when logged in returns books in json format', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim', password: 'tim' });
+    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .get('/books')
       .expect(200)
@@ -112,7 +112,7 @@ describe('post /books', () => {
     let userAfterUpdate = {};
     let book = {};
 
-    await agent.post('/login').send({ username: 'tim', password: 'tim' });
+    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .post('/books')
       .send({
@@ -125,7 +125,7 @@ describe('post /books', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    userAfterUpdate = await User.findOne({ username: 'tim' });
+    userAfterUpdate = await User.findOne({ username: 'tim123' });
     book = await Book.findOne({ title: 'The Subtle Art of Not Giving a F*ck' });
 
     expect(userAfterUpdate.books).toHaveLength(2); // there is already one in the database
@@ -146,7 +146,7 @@ describe('get /books/:id', () => {
   test('trying to view an invalid book id while being logged in returns an error', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim', password: 'tim' });
+    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .get('/books/123456')
       .expect(404)
@@ -156,7 +156,7 @@ describe('get /books/:id', () => {
   test('trying to view a valid book id that a user does not own returns an error', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim', password: 'tim' });
+    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .get(`/books/${notOwnedValidBookId}`)
       .expect(401)
@@ -166,7 +166,7 @@ describe('get /books/:id', () => {
   test('trying to view a valid book id that a user owns returns the book in json format', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim', password: 'tim' });
+    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .get(`/books/${validBookId}`)
       .expect(200)
@@ -188,7 +188,7 @@ describe('put /books/:id', () => {
   test('trying to edit an invalid book id while being logged in returns an error', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim', password: 'tim' });
+    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .put('/books/123456')
       .send({ read: true })
@@ -199,7 +199,7 @@ describe('put /books/:id', () => {
   test('trying to edit a valid book id that a user does not own returns an error', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim', password: 'tim' });
+    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .put(`/books/${notOwnedValidBookId}`)
       .send({ read: true })
@@ -211,7 +211,7 @@ describe('put /books/:id', () => {
     const agent = supertest.agent(app);
     let editedBook = {};
 
-    await agent.post('/login').send({ username: 'tim', password: 'tim' });
+    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .put(`/books/${validBookId}`)
       .send({ read: true })
@@ -236,7 +236,7 @@ describe('delete /books/:id', () => {
   test('trying to edit an invalid book id while being logged in returns an error', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim', password: 'tim' });
+    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .delete('/books/123456')
       .expect(404)
@@ -246,7 +246,7 @@ describe('delete /books/:id', () => {
   test('trying to delete a valid book id that a user does not own returns an error', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim', password: 'tim' });
+    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .delete(`/books/${notOwnedValidBookId}`)
       .expect(401)
@@ -258,13 +258,13 @@ describe('delete /books/:id', () => {
     let user = {};
     let deletedBook = {};
 
-    await agent.post('/login').send({ username: 'tim', password: 'tim' });
+    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .delete(`/books/${validBookId}`)
       .expect(200)
       .expect({ message: 'delete successful' });
 
-    user = await User.findOne({ username: 'tim' });
+    user = await User.findOne({ username: 'tim123' });
     deletedBook = await Book.findById(validBookId);
 
     expect(user.books).toHaveLength(1); // 2 books prior to deletion (see beforeAll and post test)

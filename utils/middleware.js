@@ -21,7 +21,6 @@ const unknownEndpoint = (request, response) => {
 
 const errorHandler = (error, request, response, next) => {
   logger.error(error.message);
-  logger.error(error.errors.username.kind);
 
   if (error.name === 'CastError') {
     return response.status(404).json({ error: 'That book does not exist.' });

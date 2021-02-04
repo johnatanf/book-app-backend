@@ -16,15 +16,15 @@ beforeAll(async () => {
 describe('post /users', () => {
   test('complete credentials', async () => {
     const user = {
-      username: 'tim',
+      username: 'tim123',
       name: 'Tim',
-      password: 'tim',
+      password: 'tim123',
     };
     await request.post('/users')
       .send(user)
       .expect(200)
       .expect({
-        username: 'tim',
+        username: 'tim123',
         name: 'Tim',
       });
   });
@@ -32,7 +32,7 @@ describe('post /users', () => {
   test('missing username', async () => {
     const user = {
       name: 'Tim',
-      password: 'tim',
+      password: 'tim123',
     };
     await request.post('/users')
       .send(user)
@@ -42,8 +42,8 @@ describe('post /users', () => {
 
   test('missing name', async () => {
     const user = {
-      username: 'tim',
-      password: 'tim',
+      username: 'tim123',
+      password: 'tim123',
     };
     await request.post('/users')
       .send(user)
@@ -53,8 +53,8 @@ describe('post /users', () => {
 
   test('missing password', async () => {
     const user = {
-      username: 'tim',
-      name: 'tim',
+      username: 'tim123',
+      name: 'Tim',
     };
     await request.post('/users')
       .send(user)
