@@ -25,7 +25,7 @@ booksRouter.post('/', middleware.checkLoggedIn, async (request, response, next) 
     const googleBookId = body.googleBookId ? sanitizeHtml(body.googleBookId) : undefined;
     const title = body.title ? sanitizeHtml(body.title) : undefined;
     const subtitle = body.subtitle ? sanitizeHtml(body.subtitle) : undefined;
-    const authors = body.article ? sanitizeHtml(body.authors) : undefined;
+    const authors = body.authors ? sanitizeHtml(body.authors) : undefined;
     const bookCoverUrl = body.bookCoverUrl ? sanitizeHtml(body.bookCoverUrl) : undefined;
 
     const book = new Book({
