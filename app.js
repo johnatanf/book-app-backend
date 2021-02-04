@@ -38,7 +38,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(middleware.requestLogger);
 
 app.use(cookieParser());
-app.use(session({ secret: config.SESSION_SECRET, resave: false, saveUninitialized: false }));
+app.use(session({
+  secret: config.SESSION_SECRET, name: 'sessionId', resave: false, saveUninitialized: false,
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
