@@ -14,6 +14,10 @@ usersRouter.post('/', async (request, response, next) => {
       return response.status(400).json({ error: 'username, name and password are required' });
     }
 
+    if (body.password.length < 6) {
+      return response.status(400).json({ error: 'Password should be at least 6 character long.' });
+    }
+
     const passwordHash = await bcrypt.hash(body.password, saltRounds);
 
     const user = new User({

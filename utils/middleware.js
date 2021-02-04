@@ -21,6 +21,7 @@ const unknownEndpoint = (request, response) => {
 
 const errorHandler = (error, request, response, next) => {
   logger.error(error.message);
+  logger.error(error.errors.username.kind);
 
   if (error.name === 'CastError') {
     return response.status(404).json({ error: 'That book does not exist.' });
@@ -28,6 +29,10 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'ValidationError' && error.errors.username.kind === 'unique') {
     return response.status(400).json({ error: 'Username is already taken.' });
+  }
+
+  if (error.name === 'ValidationError' && error.errors.username.kind === 'minlength') {
+    return response.status(400).json({ error: 'Username should be at least 6 characters long.' });
   }
 
   return next(error);
