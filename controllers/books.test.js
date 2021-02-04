@@ -16,6 +16,10 @@ beforeAll(async () => {
     useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true,
   });
 
+  // clear database
+  await User.deleteMany({});
+  await Book.deleteMany({});
+
   // first agent (tim)
   const agent = supertest.agent(app);
 
@@ -268,8 +272,6 @@ describe('delete /books/:id', () => {
   });
 });
 
-afterAll(async () => {
-  await User.deleteMany({});
-  await Book.deleteMany({});
+afterAll(() => {
   mongoose.connection.close();
 });

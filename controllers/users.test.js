@@ -10,6 +10,7 @@ beforeAll(async () => {
   await mongoose.connect(config.MONGODB_URI, {
     useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true,
   });
+  await User.deleteMany({});
 });
 
 describe('post /users', () => {
@@ -62,7 +63,6 @@ describe('post /users', () => {
   });
 });
 
-afterAll(async () => {
-  await User.deleteMany({});
+afterAll(() => {
   mongoose.connection.close();
 });

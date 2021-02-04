@@ -10,6 +10,7 @@ beforeAll(async () => {
   await mongoose.connect(config.MONGODB_URI, {
     useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true,
   });
+  await User.deleteMany({});
   await request
     .post('/users')
     .send({ username: 'tim', name: 'Tim', password: 'tim' });
@@ -57,6 +58,5 @@ describe('post /login', () => {
 });
 
 afterAll(async () => {
-  await User.deleteMany({})
   mongoose.connection.close();
 });
