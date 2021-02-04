@@ -51,7 +51,7 @@ booksRouter.get('/:id', middleware.checkLoggedIn, async (request, response, next
     const book = await Book.findById(id);
 
     if (!book.userId.equals(userId)) {
-      return response.json({ error: 'You do not have permission to view this book.' });
+      return response.status(401).json({ error: 'You do not have permission to view this book.' });
     }
 
     // request remaining information from google api
@@ -81,7 +81,7 @@ booksRouter.put('/:id', middleware.checkLoggedIn, async (request, response, next
     const book = await Book.findById(id);
 
     if (!book.userId.equals(userId)) {
-      return response.json({ error: 'You do not have permission to edit this book.' });
+      return response.status(401).json({ error: 'You do not have permission to edit this book.' });
     }
 
     const updatedBook = await Book.findByIdAndUpdate(
@@ -104,7 +104,7 @@ booksRouter.delete('/:id', middleware.checkLoggedIn, async (request, response, n
     const user = await User.findById(userId);
 
     if (!book.userId.equals(userId)) {
-      return response.json({ error: 'You do not have permission to delete this book.' });
+      return response.status(401).json({ error: 'You do not have permission to delete this book.' });
     }
 
     user.books = user.books.filter((iterateBook) => !iterateBook._id.equals(book._id));

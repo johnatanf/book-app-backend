@@ -10,7 +10,7 @@ const requestLogger = (request, response, next) => {
 
 const checkLoggedIn = (request, response, next) => {
   if (!request.user) {
-    return response.status(403).json({ error: 'Please log in first' });
+    return response.status(401).json({ error: 'Please log in first' });
   }
   return next();
 };
@@ -22,7 +22,11 @@ const unknownEndpoint = (request, response) => {
 const errorHandler = (error, request, response, next) => {
   logger.error(error.message);
 
-  next(error);
+  if (error.name === 'CastError') {
+    return response.status(404).json({ error: 'That book does not exist.' });
+  }
+
+  return next(error);
 };
 
 module.exports = {
