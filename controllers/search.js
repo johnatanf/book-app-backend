@@ -1,30 +1,41 @@
 const express = require('express');
 const axios = require('axios');
+const middleware = require('../utils/middleware');
+const Book = require('../models/Book');
 
 const searchRouter = express.Router();
 
-searchRouter.get('/', async (request, response) => {
-  // url format: baseUrl/search?query=...
-  const { query } = request.query;
+searchRouter.get('/', middleware.checkLoggedIn, async (request, response, next) => {
+  try {
+    // url format: baseUrl/search?query=...
+    const { query } = request.query;
+    const userId = request.user._id;
 
-  const axiosData = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
-  let googleData = await axiosData.data.items;
+    const axiosData = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
+    let googleData = await axiosData.data.items;
+    const userBooks = await Book.find({ userId });
+    const userBookIds = userBooks.map((book) => book.googleBookId);
 
-  googleData = googleData.map((data) => ({
-    title: data.volumeInfo.title,
-    subtitle: data.volumeInfo.subtitle,
-    authors: data.volumeInfo.authors,
-    bookCoverUrl: data.volumeInfo.imageLinks.thumbnail,
-    description: data.volumeInfo.description,
-    categories: data.volumeInfo.categories,
-    releaseDate: data.volumeInfo.publishedDate,
-    rating: data.volumeInfo.averageRating,
-    pageCount: data.volumeInfo.pageCount,
-    printedPageCount: data.volumeInfo.printedPageCount,
-    linkToPurchase: data.saleInfo.buyLink,
-  }));
+    googleData = googleData.map((data) => ({
+      alreadyAdded: userBookIds.includes(data.id),
+      googleBookId: data.id,
+      title: data.volumeInfo.title,
+      subtitle: data.volumeInfo.subtitle,
+      authors: data.volumeInfo.authors,
+      bookCoverUrl: data.volumeInfo.imageLinks.thumbnail,
+      description: data.volumeInfo.description,
+      categories: data.volumeInfo.categories,
+      releaseDate: data.volumeInfo.publishedDate,
+      rating: data.volumeInfo.averageRating,
+      pageCount: data.volumeInfo.pageCount,
+      printedPageCount: data.volumeInfo.printedPageCount,
+      linkToPurchase: data.saleInfo.buyLink,
+    }));
 
-  response.json(googleData);
+    return response.json(googleData);
+  } catch (e) {
+    return next(e);
+  }
 });
 
 module.exports = searchRouter;
