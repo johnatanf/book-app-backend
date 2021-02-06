@@ -22,7 +22,7 @@ searchRouter.get('/', middleware.checkLoggedIn, async (request, response, next) 
       title: data.volumeInfo.title,
       subtitle: data.volumeInfo.subtitle,
       authors: data.volumeInfo.authors,
-      bookCoverUrl: data.volumeInfo.imageLinks.thumbnail,
+      bookCoverUrl: data.volumeInfo.imageLinks ? data.volumeInfo.imageLinks.thumbnail : null,
       description: data.volumeInfo.description,
       categories: data.volumeInfo.categories,
       releaseDate: data.volumeInfo.publishedDate,

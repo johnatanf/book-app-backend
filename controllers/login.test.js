@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const app = require('../app');
 const config = require('../utils/config');
 const User = require('../models/User');
+const Book = require('../models/Book');
 
 const request = supertest(app);
 
@@ -10,7 +11,11 @@ beforeAll(async () => {
   await mongoose.connect(config.MONGODB_URI, {
     useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true,
   });
+  // clear database
   await User.deleteMany({});
+  await Book.deleteMany({});
+
+  // create account
   await request
     .post('/users')
     .send({ username: 'tim123', name: 'Tim', password: 'tim123' });

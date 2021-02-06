@@ -2,6 +2,7 @@ const supertest = require('supertest');
 const mongoose = require('mongoose');
 const app = require('../app');
 const User = require('../models/User');
+const Book = require('../models/Book');
 const config = require('../utils/config');
 
 const request = supertest(app);
@@ -10,7 +11,10 @@ beforeAll(async () => {
   await mongoose.connect(config.MONGODB_URI, {
     useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true,
   });
+
+  // clear database
   await User.deleteMany({});
+  await Book.deleteMany({});
 });
 
 describe('post /users', () => {
