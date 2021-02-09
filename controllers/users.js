@@ -2,10 +2,15 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const sanitizeHtml = require('sanitize-html');
 const User = require('../models/User');
+const middleware = require('../utils/middleware');
 
 const saltRounds = 10;
 
 const usersRouter = express.Router();
+
+usersRouter.get('/', middleware.checkLoggedIn, (request, response) => {
+  response.status(200).json({ username: request.user.username });
+});
 
 usersRouter.post('/', async (request, response, next) => {
   try {
