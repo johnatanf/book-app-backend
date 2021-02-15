@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
 const sanitizeHtml = require('sanitize-html');
+const { decode } = require('html-entities');
 const middleware = require('../utils/middleware');
 const Book = require('../models/Book');
 const User = require('../models/User');
@@ -11,7 +12,12 @@ booksRouter.get('/', middleware.checkLoggedIn, async (request, response, next) =
   try {
     const userId = request.user._id;
     const books = await Book.find({ userId });
-    response.json(books);
+
+    response.json(books.map((book) => {
+      const decodedBook = book;
+      decodedBook.bookCoverUrl = decode(decodedBook.bookCoverUrl);
+      return decodedBook;
+    }));
   } catch (e) {
     next(e);
   }
