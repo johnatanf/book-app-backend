@@ -70,7 +70,11 @@ booksRouter.get('/:id', middleware.checkLoggedIn, async (request, response, next
     const googleData = axiosData.data;
 
     return response.json({
-      ...book.toObject(),
+      googleBookId: book.googleBookId,
+      title: book.title,
+      subtitle: book.subtitle,
+      read: book.read,
+      bookCoverUrl: book.bookCoverUrl,
       description: googleData.volumeInfo.description,
       categories: googleData.volumeInfo.categories,
       releaseDate: googleData.volumeInfo.publishedDate,

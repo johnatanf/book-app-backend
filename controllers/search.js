@@ -12,12 +12,12 @@ searchRouter.get('/', middleware.checkLoggedIn, async (request, response, next) 
     const userId = request.user._id;
 
     const axiosData = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
-    let googleData = await axiosData.data.items;
+    let googleData = axiosData.data.items;
     const userBooks = await Book.find({ userId });
     const userBookIds = userBooks.map((book) => book.googleBookId);
 
     googleData = googleData.map((data) => ({
-      alreadyAdded: userBookIds.includes(data.id),
+      alreadyAdded: userBookIds.includes(data.id) ? userId : false,
       googleBookId: data.id,
       title: data.volumeInfo.title,
       subtitle: data.volumeInfo.subtitle,
