@@ -38,15 +38,15 @@ beforeAll(async () => {
 });
 
 describe('get /search?query=...', () => {
-  test('after running a search on a query, the alreadyAdded property of a book will be set to the userId if user already has it saved', async () => {
+  test('after running a search on a query, the _id property of a book will be set to the book\'s id if user already has it saved', async () => {
     const agent = supertest.agent(app);
 
     await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     const books = await agent.get('/search?query=21 lessons for the 21st century');
     const testBook = books.body.find((book) => book.title === '21 Lessons for the 21st Century');
-    const testUser = await User.findOne({ username: 'tim123' });
+    const bookInDatabase = await Book.findOne({ googleBookId: 'W7ZMDwAAQBAJ' });
 
-    expect(testBook.alreadyAdded.toString()).toBe(testUser._id.toString());
+    expect(testBook._id.toString()).toBe(bookInDatabase._id.toString());
   });
 });
 

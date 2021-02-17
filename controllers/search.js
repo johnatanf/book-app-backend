@@ -17,7 +17,9 @@ searchRouter.get('/', middleware.checkLoggedIn, async (request, response, next) 
     const userBookIds = userBooks.map((book) => book.googleBookId);
 
     googleData = googleData.map((data) => ({
-      alreadyAdded: userBookIds.includes(data.id) ? userId : false,
+      _id: userBookIds.includes(data.id)
+        ? userBooks.find((book) => book.googleBookId === data.id)._id
+        : null,
       googleBookId: data.id,
       title: data.volumeInfo.title,
       subtitle: data.volumeInfo.subtitle,
