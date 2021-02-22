@@ -3,6 +3,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const bodyParser = require('body-parser');
@@ -40,7 +41,11 @@ app.use(middleware.requestLogger);
 
 app.use(cookieParser());
 app.use(session({
-  secret: config.SESSION_SECRET, name: 'sessionId', resave: false, saveUninitialized: false,
+  secret: config.SESSION_SECRET,
+  name: 'sessionId',
+  resave: false,
+  saveUninitialized: false,
+  store: new MongoStore({ mongooseConnection: mongoose.connection }),
 }));
 
 app.use(passport.initialize());
