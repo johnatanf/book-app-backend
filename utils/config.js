@@ -9,6 +9,7 @@ const {
   SESSION_SECRET,
   DEVELOPMENT_ORIGIN,
   PRODUCTION_ORIGIN,
+  DOMAIN,
 } = process.env;
 
 let MONGODB_URI = '';
@@ -39,4 +40,5 @@ module.exports = {
   SECURE_COOKIE_CONFIG,
   SAME_SITE,
   ORIGIN,
+  DOMAIN,
 };

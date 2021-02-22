@@ -48,6 +48,7 @@ app.use(session({
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
   cookie: {
     path: '/',
+    domain: config.DOMAIN,
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7,
     secure: config.SECURE_COOKIE_CONFIG,
