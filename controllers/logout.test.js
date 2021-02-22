@@ -29,11 +29,11 @@ beforeAll(async () => {
   await agent
     .post('/books')
     .send({
-      googleBookId: 'W7ZMDwAAQBAJ',
-      title: '21 Lessons for the 21st Century',
+      googleBookId: 'i6q_zQEACAAJ',
+      title: 'Nineteen Eighty-Four',
       subtitle: '',
-      authors: ['Yuval Noah Harari'],
-      bookCoverUrl: 'http://books.google.com/books/content?id=W7ZMDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api',
+      authors: ['George Orwell'],
+      bookCoverUrl: 'http://books.google.com/books/content?id=i6q_zQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api',
     });
 });
 

@@ -97,11 +97,11 @@ describe('post /books', () => {
     await agent
       .post('/books')
       .send({
-        googleBookId: 'yng_CwAAQBAJ',
-        title: 'The Subtle Art of Not Giving a F*ck',
-        subtitle: 'A Counterintuitive Approach to Living a Good Life',
-        authors: ['Mark Manson'],
-        bookCoverUrl: 'http://books.google.com/books/content?id=yng_CwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&imgtk=AFLRE72DpaeKcfBPrbK-zx0pskAv37JrjJqm2EekymkNj6qtLwh7AWHylbGGw_WKZ6KwbHQ7La9SQhYqHdyzhksmeiF67OGz1BLnSxmQGwbIph8vBXy0AhB6Zr7gNS5_-Cef3yiH0TWr&source=gbs_api',
+        googleBookId: 'i6q_zQEACAAJ',
+        title: 'Nineteen Eighty-Four',
+        subtitle: '',
+        authors: ['George Orwell'],
+        bookCoverUrl: 'http://books.google.com/books/content?id=i6q_zQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api',
       })
       .expect(401)
       .expect({ error: 'Please log in first' });
@@ -116,17 +116,17 @@ describe('post /books', () => {
     await agent
       .post('/books')
       .send({
-        googleBookId: 'yng_CwAAQBAJ',
-        title: 'The Subtle Art of Not Giving a F*ck',
-        subtitle: 'A Counterintuitive Approach to Living a Good Life',
-        authors: ['Mark Manson'],
-        bookCoverUrl: 'http://books.google.com/books/content?id=yng_CwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&imgtk=AFLRE72DpaeKcfBPrbK-zx0pskAv37JrjJqm2EekymkNj6qtLwh7AWHylbGGw_WKZ6KwbHQ7La9SQhYqHdyzhksmeiF67OGz1BLnSxmQGwbIph8vBXy0AhB6Zr7gNS5_-Cef3yiH0TWr&source=gbs_api',
+        googleBookId: 'i6q_zQEACAAJ',
+        title: 'Nineteen Eighty-Four',
+        subtitle: '',
+        authors: ['George Orwell'],
+        bookCoverUrl: 'http://books.google.com/books/content?id=i6q_zQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api',
       })
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
     userAfterUpdate = await User.findOne({ username: 'tim123' });
-    book = await Book.findOne({ title: 'The Subtle Art of Not Giving a F*ck' });
+    book = await Book.findOne({ title: 'Nineteen Eighty-Four' });
 
     expect(userAfterUpdate.books).toHaveLength(2); // there is already one in the database
     expect(book).toBeTruthy();

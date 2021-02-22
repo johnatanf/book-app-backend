@@ -44,7 +44,7 @@ describe('get /search?query=...', () => {
     await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     const books = await agent.get('/search?query=21 lessons for the 21st century');
     const testBook = books.body.find((book) => book.title === '21 Lessons for the 21st Century');
-    const bookInDatabase = await Book.findOne({ googleBookId: 'W7ZMDwAAQBAJ' });
+    const bookInDatabase = await Book.findOne({ title: '21 Lessons for the 21st Century' });
 
     expect(testBook._id.toString()).toBe(bookInDatabase._id.toString());
   });
