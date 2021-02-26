@@ -10,7 +10,7 @@ const booksRouter = express.Router();
 
 booksRouter.get('/', middleware.checkLoggedIn, async (request, response, next) => {
   try {
-    const userId = request.user._id;
+    const userId = // user token;
     const books = await Book.find({ userId });
 
     response.json(books.map((book) => {
@@ -25,7 +25,7 @@ booksRouter.get('/', middleware.checkLoggedIn, async (request, response, next) =
 
 booksRouter.post('/', middleware.checkLoggedIn, async (request, response, next) => {
   try {
-    const userId = request.user._id;
+    const userId = // user token;
     const { body } = request;
     const user = await User.findById(userId);
     const googleBookId = body.googleBookId ? sanitizeHtml(body.googleBookId) : undefined;
@@ -57,7 +57,7 @@ booksRouter.post('/', middleware.checkLoggedIn, async (request, response, next) 
 
 booksRouter.get('/:id', middleware.checkLoggedIn, async (request, response, next) => {
   try {
-    const userId = request.user._id;
+    const userId = // user token;
     const { id } = request.params;
     const book = await Book.findById(id);
 
@@ -91,7 +91,7 @@ booksRouter.get('/:id', middleware.checkLoggedIn, async (request, response, next
 
 booksRouter.put('/:id', middleware.checkLoggedIn, async (request, response, next) => {
   try {
-    const userId = request.user._id;
+    const userId = // user token;
     const { id } = request.params;
     const read = request.body.read ? sanitizeHtml(request.body.read) : false;
     const book = await Book.findById(id);
@@ -114,7 +114,7 @@ booksRouter.put('/:id', middleware.checkLoggedIn, async (request, response, next
 
 booksRouter.delete('/:id', middleware.checkLoggedIn, async (request, response, next) => {
   try {
-    const userId = request.user._id;
+    const userId = // user token;
     const { id } = request.params;
     const book = await Book.findById(id);
     const user = await User.findById(userId);

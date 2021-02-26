@@ -9,7 +9,7 @@ searchRouter.get('/', middleware.checkLoggedIn, async (request, response, next) 
   try {
     // url format: baseUrl/search?query=...
     const { query } = request.query;
-    const userId = request.user._id;
+    const userId = // user token;;
 
     const axiosData = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=${query}`);
     let googleData = axiosData.data.items;

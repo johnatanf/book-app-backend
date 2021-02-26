@@ -9,6 +9,7 @@ const requestLogger = (request, response, next) => {
 };
 
 const checkLoggedIn = (request, response, next) => {
+  // user token;
   if (!request.user) {
     return response.status(401).json({ error: 'Please log in first' });
   }

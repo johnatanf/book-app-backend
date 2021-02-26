@@ -9,6 +9,7 @@ const saltRounds = 10;
 const usersRouter = express.Router();
 
 usersRouter.get('/', middleware.checkLoggedIn, (request, response) => {
+  // user token;
   response.status(200).json({ username: request.user.username });
 });
 
@@ -32,6 +33,7 @@ usersRouter.post('/', async (request, response, next) => {
 
     await user.save();
 
+    // user token;
     return response.json({
       username: user.username,
       name: user.name,
