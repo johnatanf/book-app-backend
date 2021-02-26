@@ -42,7 +42,7 @@ app.use(middleware.requestLogger);
 
 app.use(cookieParser());
 app.use(session({
-  secret: config.SESSION_SECRET,
+  secret: config.SECRET,
   name: 'sessionId',
   resave: false,
   saveUninitialized: false,

@@ -23,6 +23,7 @@
     "express-session": "^1.17.1",
     "helmet": "^4.4.1",
     "html-entities": "^2.1.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.14",
     "mongoose-unique-validator": "^2.0.3",
     "sanitize-html": "^2.3.2"
