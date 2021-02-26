@@ -10,26 +10,26 @@ const loginRouter = express.Router();
 loginRouter.post('/', async (request, response, next) => {
   try {
     let { username, password } = request.body;
-    // username = sanitizeHtml(username);
-    // password = sanitizeHtml(password);
+    username = sanitizeHtml(username);
+    password = sanitizeHtml(password);
     const user = await User.findOne({ username });
 
     if (!user) {
-      response.status(401).json({ error: 'wrong username or password' });
+      return response.status(401).json({ error: 'wrong username or password' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
     if (!passwordMatch) {
-      response.status(401).json({ error: 'wrong username or password' });
+      return response.status(401).json({ error: 'wrong username or password' });
     }
 
     const payload = { _id: user._id, username };
     const token = jwt.sign(payload, config.SECRET, { expiresIn: '7d' });
 
-    response.status(200).json({ token });
+    return response.status(200).json({ token });
   } catch (e) {
-    next(e);
+    return next(e);
   }
 });
 
