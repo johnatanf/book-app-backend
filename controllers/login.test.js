@@ -23,42 +23,40 @@ beforeAll(async () => {
 
 describe('post /login', () => {
   test('log in with correct user credentials returns a success message', async () => {
-    await request
+    const logInRequest = await request
       .post('/login')
-      .redirects(1)
       .send({
         username: 'tim123',
         password: 'tim123',
       })
       .expect(200)
-      .expect('Content-Type', /json/)
-      .expect({ message: 'login successful' });
+      .expect('Content-Type', /json/);
+
+    expect(logInRequest.body.token).toBeTruthy();
   });
 
   test('log in with incorrect username returns an error', async () => {
     await request
       .post('/login')
-      .redirects(1)
       .send({
         username: 'tima123',
         password: 'tim123',
       })
       .expect(400)
       .expect('Content-Type', /json/)
-      .expect({ error: 'login failed' });
+      .expect({ error: 'wrong username or password' });
   });
 
   test('log in with incorrect password returns an error', async () => {
     await request
       .post('/login')
-      .redirects(1)
       .send({
         username: 'tim123',
         password: 'tima123',
       })
       .expect(400)
       .expect('Content-Type', /json/)
-      .expect({ error: 'login failed' });
+      .expect({ error: 'wrong username or password' });
   });
 });
 

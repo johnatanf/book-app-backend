@@ -15,13 +15,13 @@ loginRouter.post('/', async (request, response, next) => {
     const user = await User.findOne({ username });
 
     if (!user) {
-      return response.status(401).json({ error: 'wrong username or password' });
+      return response.status(400).json({ error: 'wrong username or password' });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
     if (!passwordMatch) {
-      return response.status(401).json({ error: 'wrong username or password' });
+      return response.status(400).json({ error: 'wrong username or password' });
     }
 
     const payload = { _id: user._id, username };
