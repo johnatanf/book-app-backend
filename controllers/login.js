@@ -9,7 +9,9 @@ const loginRouter = express.Router();
 
 loginRouter.post('/', async (request, response, next) => {
   try {
-    const { username, password } = request.body;
+    let { username, password } = request.body;
+    // username = sanitizeHtml(username);
+    // password = sanitizeHtml(password);
     const user = await User.findOne({ username });
 
     if (!user) {
