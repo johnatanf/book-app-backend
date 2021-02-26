@@ -23,7 +23,7 @@ loginRouter.post('/', async (request, response, next) => {
     }
 
     const payload = { _id: user._id, username };
-    const token = jwt.sign(payload, config.SECRET);
+    const token = jwt.sign(payload, config.SECRET, { expiresIn: '7d' });
 
     response.status(200).json({ token });
   } catch (e) {
