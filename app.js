@@ -12,7 +12,6 @@ const middleware = require('./utils/middleware');
 
 const booksRouter = require('./controllers/books');
 const loginRouter = require('./controllers/login');
-const logoutRouter = require('./controllers/logout');
 const searchRouter = require('./controllers/search');
 const usersRouter = require('./controllers/users');
 
@@ -58,7 +57,6 @@ app.use(session({
 
 app.use('/books', booksRouter);
 app.use('/login', loginRouter);
-app.use('/logout', logoutRouter);
 app.use('/search', searchRouter);
 app.use('/users', usersRouter);
 app.use('/', (request, response) => {
