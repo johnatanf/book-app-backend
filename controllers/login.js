@@ -1,56 +1,12 @@
 const express = require('express');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 const sanitizeHtml = require('sanitize-html');
 const User = require('../models/User');
 
 const loginRouter = express.Router();
 
-passport.use(new LocalStrategy(
-  async (username, password, done) => {
-    try {
-      const user = await User.findOne({ username: sanitizeHtml(username) });
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
-      }
+loginRouter.post('/', (request, response) => {
 
-      const correctPassword = await bcrypt.compare(sanitizeHtml(password), user.passwordHash);
-
-      if (!correctPassword) {
-        return done(null, false, { message: 'incorrect passsword.' });
-      }
-
-      return done(null, user);
-    } catch (error) {
-      return done(error);
-    }
-  },
-));
-
-passport.serializeUser((user, done) => {
-  done(null, user.id);
 });
-
-passport.deserializeUser((id, done) => {
-  User.findById(id, (err, user) => {
-    done(err, user);
-  });
-});
-
-loginRouter.get('/success', (request, response) => {
-  response.send({ message: 'login successful' });
-});
-
-loginRouter.get('/failure', (request, response) => {
-  response.status(400).send({ error: 'login failed' });
-});
-
-loginRouter.post('/',
-  passport.authenticate('local', {
-    successRedirect: '/login/success',
-    failureRedirect: '/login/failure',
-    failureFlash: false,
-  }));
 
 module.exports = loginRouter;

@@ -5,7 +5,6 @@ const helmet = require('helmet');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const cookieParser = require('cookie-parser');
-const passport = require('passport');
 const bodyParser = require('body-parser');
 const config = require('./utils/config');
 const logger = require('./utils/logger');
@@ -56,9 +55,6 @@ app.use(session({
     sameSite: config.SAME_SITE,
   },
 }));
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 app.use('/books', booksRouter);
 app.use('/login', loginRouter);
