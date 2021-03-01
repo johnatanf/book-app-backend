@@ -5,6 +5,9 @@ const Book = require('../models/Book');
 const User = require('../models/User');
 const config = require('../utils/config');
 
+// authorization tokens
+let authorizationToken = null;
+
 beforeAll(async () => {
   // connect to database
   await mongoose.connect(config.MONGODB_URI, {
@@ -22,12 +25,15 @@ beforeAll(async () => {
     .post('/users')
     .send({ username: 'tim123', name: 'Tim', password: 'tim123' });
 
-  await agent
+  const loggedIn = await agent
     .post('/login')
     .send({ username: 'tim123', password: 'tim123' });
 
+  authorizationToken = `Bearer ${loggedIn.body.token}`;
+
   await agent
     .post('/books')
+    .set('Authorization', authorizationToken)
     .send({
       googleBookId: 'W7ZMDwAAQBAJ',
       title: '21 Lessons for the 21st Century',
@@ -41,8 +47,10 @@ describe('get /search?query=...', () => {
   test('after running a search on a query, the _id property of a book will be set to the book\'s id if user already has it saved', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
-    const books = await agent.get('/search?query=21 lessons for the 21st century');
+    const books = await agent
+      .get('/search?query=21 lessons for the 21st century')
+      .set('Authorization', authorizationToken);
+
     const testBook = books.body.find((book) => book.title === '21 Lessons for the 21st Century');
     const bookInDatabase = await Book.findOne({ title: '21 Lessons for the 21st Century' });
 

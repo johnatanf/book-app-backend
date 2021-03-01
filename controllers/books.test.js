@@ -5,6 +5,8 @@ const Book = require('../models/Book');
 const User = require('../models/User');
 const config = require('../utils/config');
 
+let authorizationTokenAgent1 = null;
+let authorizationTokenAgent2 = null;
 let validBook = null;
 let validBookId = null;
 let notOwnedValidBook = null;
@@ -27,12 +29,15 @@ beforeAll(async () => {
     .post('/users')
     .send({ username: 'tim123', name: 'Tim', password: 'tim123' });
 
-  await agent
+  const loggedInAgent1 = await agent
     .post('/login')
     .send({ username: 'tim123', password: 'tim123' });
 
+  authorizationTokenAgent1 = `Bearer ${loggedInAgent1.body.token}`;
+
   await agent
     .post('/books')
+    .set('Authorization', authorizationTokenAgent1)
     .send({
       googleBookId: 'W7ZMDwAAQBAJ',
       title: '21 Lessons for the 21st Century',
@@ -51,12 +56,15 @@ beforeAll(async () => {
     .post('/users')
     .send({ username: 'bob456', name: 'Bob', password: 'bob456' });
 
-  await agent2
+  const loggedInAgent2 = await agent2
     .post('/login')
     .send({ username: 'bob456', password: 'bob456' });
 
+  authorizationTokenAgent2 = `Bearer ${loggedInAgent2.body.token}`;
+
   await agent2
     .post('/books')
+    .set('Authorization', authorizationTokenAgent2)
     .send({
       googleBookId: 'pD6arNyKyi8C',
       title: 'The Hobbit',
@@ -75,16 +83,17 @@ describe('get /books', () => {
 
     await agent
       .get('/books')
+      .set('Authorization', null)
       .expect(401)
-      .expect({ error: 'Please log in first' });
+      .expect({ error: 'Please log in.' });
   });
 
   test('retrieving /books when logged in returns books in json format', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .get('/books')
+      .set('Authorization', authorizationTokenAgent1)
       .expect(200)
       .expect('Content-Type', /application\/json/);
   });
@@ -96,6 +105,7 @@ describe('post /books', () => {
 
     await agent
       .post('/books')
+      .set('Authorization', null)
       .send({
         googleBookId: 'i6q_zQEACAAJ',
         title: 'Nineteen Eighty-Four',
@@ -104,7 +114,7 @@ describe('post /books', () => {
         bookCoverUrl: 'http://books.google.com/books/content?id=i6q_zQEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api',
       })
       .expect(401)
-      .expect({ error: 'Please log in first' });
+      .expect({ error: 'Please log in.' });
   });
 
   test('creating a book when logged in returns the book in json format, appears in user\'s book array, and appears in book collection', async () => {
@@ -112,9 +122,9 @@ describe('post /books', () => {
     let userAfterUpdate = {};
     let book = {};
 
-    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .post('/books')
+      .set('Authorization', authorizationTokenAgent1)
       .send({
         googleBookId: 'i6q_zQEACAAJ',
         title: 'Nineteen Eighty-Four',
@@ -139,16 +149,17 @@ describe('get /books/:id', () => {
 
     await agent
       .get(`/books/${validBookId}`)
+      .set('Authorization', null)
       .expect(401)
-      .expect({ error: 'Please log in first' });
+      .expect({ error: 'Please log in.' });
   });
 
   test('trying to view an invalid book id while being logged in returns an error', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .get('/books/123456')
+      .set('Authorization', authorizationTokenAgent1)
       .expect(404)
       .expect({ error: 'That book does not exist.' });
   });
@@ -156,9 +167,9 @@ describe('get /books/:id', () => {
   test('trying to view a valid book id that a user does not own returns an error', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .get(`/books/${notOwnedValidBookId}`)
+      .set('Authorization', authorizationTokenAgent1)
       .expect(401)
       .expect({ error: 'You do not have permission to view this book.' });
   });
@@ -166,9 +177,9 @@ describe('get /books/:id', () => {
   test('trying to view a valid book id that a user owns returns the book in json format', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .get(`/books/${validBookId}`)
+      .set('Authorization', authorizationTokenAgent1)
       .expect(200)
       .expect('Content-Type', /application\/json/);
   });
@@ -180,17 +191,18 @@ describe('put /books/:id', () => {
 
     await agent
       .put(`/books/${validBookId}`)
+      .set('Authorization', null)
       .send({ read: true })
       .expect(401)
-      .expect({ error: 'Please log in first' });
+      .expect({ error: 'Please log in.' });
   });
 
   test('trying to edit an invalid book id while being logged in returns an error', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .put('/books/123456')
+      .set('Authorization', authorizationTokenAgent1)
       .send({ read: true })
       .expect(404)
       .expect({ error: 'That book does not exist.' });
@@ -199,9 +211,9 @@ describe('put /books/:id', () => {
   test('trying to edit a valid book id that a user does not own returns an error', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .put(`/books/${notOwnedValidBookId}`)
+      .set('Authorization', authorizationTokenAgent1)
       .send({ read: true })
       .expect(401)
       .expect({ error: 'You do not have permission to edit this book.' });
@@ -211,9 +223,9 @@ describe('put /books/:id', () => {
     const agent = supertest.agent(app);
     let editedBook = {};
 
-    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .put(`/books/${validBookId}`)
+      .set('Authorization', authorizationTokenAgent1)
       .send({ read: true })
       .expect(200)
       .expect('Content-Type', /application\/json/);
@@ -229,16 +241,17 @@ describe('delete /books/:id', () => {
 
     await agent
       .delete(`/books/${validBookId}`)
+      .set('Authorization', null)
       .expect(401)
-      .expect({ error: 'Please log in first' });
+      .expect({ error: 'Please log in.' });
   });
 
   test('trying to edit an invalid book id while being logged in returns an error', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .delete('/books/123456')
+      .set('Authorization', authorizationTokenAgent1)
       .expect(404)
       .expect({ error: 'That book does not exist.' });
   });
@@ -246,9 +259,9 @@ describe('delete /books/:id', () => {
   test('trying to delete a valid book id that a user does not own returns an error', async () => {
     const agent = supertest.agent(app);
 
-    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .delete(`/books/${notOwnedValidBookId}`)
+      .set('Authorization', authorizationTokenAgent1)
       .expect(401)
       .expect({ error: 'You do not have permission to delete this book.' });
   });
@@ -258,9 +271,9 @@ describe('delete /books/:id', () => {
     let user = {};
     let deletedBook = {};
 
-    await agent.post('/login').send({ username: 'tim123', password: 'tim123' });
     await agent
       .delete(`/books/${validBookId}`)
+      .set('Authorization', authorizationTokenAgent1)
       .expect(200)
       .expect({ message: 'delete successful' });
 
