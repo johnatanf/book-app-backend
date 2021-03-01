@@ -13,7 +13,7 @@ const requestLogger = (request, response, next) => {
 
 const checkLoggedIn = async (request, response, next) => {
   try {
-    const requestToken = request.header('Authorization');
+    const requestToken = request.header('Authorization') ? request.header('Authorization') : "null";
     const decodedToken = jwt.verify(requestToken.slice(7, requestToken.length), config.SECRET);
     const userIsInDatabase = await User.findById(decodedToken._id);
 
