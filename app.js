@@ -2,9 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const config = require('./utils/config');
 const logger = require('./utils/logger');
@@ -38,22 +35,6 @@ app.use(cors({ credentials: true, origin: config.ORIGIN }));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(middleware.requestLogger);
-
-app.use(cookieParser());
-app.use(session({
-  secret: config.SECRET,
-  name: 'sessionId',
-  resave: false,
-  saveUninitialized: false,
-  store: new MongoStore({ mongooseConnection: mongoose.connection }),
-  cookie: {
-    path: '/',
-    httpOnly: true,
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-    secure: config.SECURE_COOKIE_CONFIG,
-    sameSite: config.SAME_SITE,
-  },
-}));
 
 app.use('/books', booksRouter);
 app.use('/login', loginRouter);
