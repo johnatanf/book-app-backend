@@ -15,7 +15,7 @@ booksRouter.get('/', middleware.checkLoggedIn, async (request, response, next) =
 
     response.json(books.map((book) => {
       const decodedBook = book;
-      decodedBook.bookCoverUrl = decode(decodedBook.bookCoverUrl);
+      decodedBook.bookCoverUrl = decode(decodedBook.bookCoverUrl).replace('http', 'https');
       return decodedBook;
     }));
   } catch (e) {
@@ -75,7 +75,7 @@ booksRouter.get('/:id', middleware.checkLoggedIn, async (request, response, next
       subtitle: book.subtitle,
       read: book.read,
       authors: book.authors,
-      bookCoverUrl: decode(book.bookCoverUrl),
+      bookCoverUrl: decode(book.bookCoverUrl).replace('http', 'https'),
       description: googleData.volumeInfo.description,
       categories: googleData.volumeInfo.categories,
       releaseDate: googleData.volumeInfo.publishedDate,
